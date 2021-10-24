@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useContext } from 'react';
 import {
   FlatList,
   ScrollView,
@@ -15,6 +15,7 @@ import Card from '../components/Card';
 import Chip from '../components/Chip';
 import DefaultTitle from '../components/DefaultTitle';
 import SubtitleDefault from '../components/SubtitleDefault';
+import MyCharacterContext from '../context/MyCharactersContext';
 
 export default props => {
 
@@ -23,8 +24,9 @@ export default props => {
   const [moves, setMoves] = useState([]);
   const [types, setTypes] = useState([]);
   const [randomColors, setRandomColors] = useState([]);
-  const [nextScreenDataCharacter, setNextScreenDataCharacter] = useState(null);
   const isCancelled = useRef(false);
+  const [randomNumbers ,setRandomNumbers] = useState();
+  const { updateMyCharacters } = useContext(MyCharacterContext);
 
   useEffect(()=>{
     isCancelled.current = true
@@ -35,32 +37,51 @@ export default props => {
       i++;
     }
     setRandomColors(ram);
-    getSuggestionCharcters();
-    getAbilities();
-    getMoves();
-    getTypes();
+    if (isCancelled) {
+      getRandomNumbers(5);
+      getAbilities();
+      getMoves();
+      getTypes();
+      updateMyCharacters();
+      
+    }
 
     return () => {
-      isCancelled.current = false;
+      setSuggestionCharacters([]);
     }
-  }, [])
+  }, []);
 
+  useEffect( ()=>{
 
+    getSuggestionCharacters();
+  }, [randomNumbers]);
 
+  const getSuggestionCharacters = useCallback(async () => {
+    if (randomNumbers) {
+      let i = 0;
+      while (i < randomNumbers.length) {
+        try {
+          let res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${randomNumbers[i]}`);
+            setSuggestionCharacters((current) => [...current, res.data]);
+            console.log(res.data.name)
+          
+        } catch (err) {
+          console.log(err)
+        }
+        i++; 
+      }
+    }
+    
+  }, [randomNumbers]);
 
-  const getSuggestionCharcters = async () => {
+  const getRandomNumbers = (n) => {
     let i = 0;
-    while(i<5) {
-      let randomNumber = parseInt(Math.random() * (599));
-      try {
-      let res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${randomNumber}`)
-      setSuggestionCharacters((current) => [...current, res.data])
+    let array = [];
+    while(i<n) {
+      array.push(parseInt(Math.random() * (588)));
+      i++;
     }
-      catch (err) {
-        console.log(err)
-      }
-        i++;
-      }
+    setRandomNumbers(array);
   }
 
   const getAbilities = () => {
@@ -92,32 +113,6 @@ export default props => {
     props.navigation.push("Detail", {data});
   };
 
-  const DATA = [{
-    id: 1,
-    title: "Picachu",
-    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
-  },
-  {
-    id: 2,
-    title: "Picachu",
-    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/386.png"
-  },
-  {
-    id: 3,
-    title: "Picachu",
-    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png"
-  },
-  {
-    id: 4,
-    title: "Picachu",
-    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
-  },
-  {
-    id: 5,
-    title: "Picachu",
-    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/49.png"
-  },
-];
   const getRandomColor = () => {
     return CommonStyles.colors[(parseInt(Math.random() * (CommonStyles.colors.length - 1)))];
   }
@@ -128,14 +123,7 @@ export default props => {
 
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity style={{backgroundColor: "blue"}} onPress={navigateToSearch} ><Text>Busca</Text></TouchableOpacity>
-      <DefaultTitle title="Recentily viewed" />
-      <FlatList
-        data={DATA}
-        renderItem={({item}) => <Card text={item.title} image={item.image} />}
-        keyExtractor={item => item.id}
-        horizontal
-    />
+      { false && <TouchableOpacity style={{backgroundColor: "blue"}} onPress={navigateToSearch} ><Text>Busca</Text></TouchableOpacity> }
 
     { suggestionCharacters.length == 5 &&  (<><DefaultTitle title="Suggenstions" />
       <FlatList

@@ -21,6 +21,8 @@ export default props => {
     const onPressFunction = () => {
         if (props.content) {
             props.onPress({...props.content, bgColor: backgroundColor});
+        } else if (props.url) {
+            props.onPress({url: props.url});
         }
     }
     
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
         resizeMode: "contain"
     },
     text: {
-        color: "#fff",
+        color: "#000",
         fontWeight: "700",
         fontSize: 16,
         textTransform: "capitalize"

@@ -11,6 +11,7 @@ import axios from 'axios';
 import DefaultTitle from '../components/DefaultTitle';
 import SubtitleDefault from '../components/SubtitleDefault';
 import MultiuseCard from '../components/MultiuseCard';
+import CommonStyles from '../CommonStyles';
 
 
 export default (props) => {
@@ -24,7 +25,6 @@ export default (props) => {
         if (props.route.params.data || props.route.params.url) {
             setIsLoading(true);
             if (title == "Ability" || title == "Type") {
-
                 axios.get(urlToFetch).then((res)=>{
                     setArrayOfContent(res.data.pokemon);
                     setIsLoading(false);
@@ -43,6 +43,10 @@ export default (props) => {
         props.navigation.push("Pokemon", url);   
     };
 
+    const getRandomColor = () => {
+        return CommonStyles.colors[(parseInt(Math.random() * (CommonStyles.colors.length - 1)))];
+    }
+
     return (
         <View style={styles.container}>
             <DefaultTitle title={`${title}: ${contentType}`} />
@@ -51,7 +55,7 @@ export default (props) => {
 
             {  arrayOfContent.length > 0 && (title == "Ability" || title == "Type") ?
                 arrayOfContent.map((item, index)=>
-                (<MultiuseCard key={index} text={item.pokemon.name} urlToFetch={item.pokemon.url} contentType={contentType} title={title} onPress={navigateToCharacter} />)
+                (<MultiuseCard key={index} text={item.pokemon.name} urlToFetch={item.pokemon.url} contentType={contentType} title={title} color={getRandomColor()} onPress={navigateToCharacter} />)
                 )
                 
                 : false
@@ -59,7 +63,7 @@ export default (props) => {
 
             {  arrayOfContent.length > 0 && title == "Move"?
                 arrayOfContent.map((item, index)=>
-                (<MultiuseCard key={index} text={item.name} urlToFetch={item.url} contentType={contentType} title={title} onPress={navigateToCharacter} />)
+                (<MultiuseCard key={index} text={item.name} urlToFetch={item.url} contentType={contentType} title={title} color={getRandomColor()} onPress={navigateToCharacter} />)
                 )
                 
                 : false

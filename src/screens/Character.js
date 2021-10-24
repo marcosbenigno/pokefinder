@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -18,7 +18,10 @@ import MultiuseCard from '../components/MultiuseCard';
 import VerticalIndicator from '../components/VerticalIndicator';
 import PaginationManager from '../components/PaginationManager';
 import CharacterHeader from '../components/CharacterHeader';
-import { Storage } from 'expo-storage'
+import { Storage } from 'expo-storage';
+import CustomHeader from '../components/CustomHeader';
+import MyCharacterContext from '../context/MyCharactersContext';
+
 
 
 export default (props) => {
@@ -26,6 +29,9 @@ export default (props) => {
     const [mainColor, setMainColor] = useState(null);
     const [data, setData] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
+    const [initialSavedState, setInitialSavedState] = useState(false);
+
+    const { insertCharacter, removeCharacter, isMyCharacter } = useContext(MyCharacterContext);
 
     const { height } = useWindowDimensions();
 
@@ -42,7 +48,7 @@ export default (props) => {
         setCharacterPic(props.route.params.data.sprites.other["official-artwork"].front_default);
         setMainColor(props.route.params.data.bgColor);
         setData(props.route.params.data);
-        addRecentlyViewed(props.route.params.data.id);
+        setInitialSavedState(isMyCharacter(props.route.params.data.id));
     };
 
     const setDataFromUrl = () => {
@@ -51,7 +57,7 @@ export default (props) => {
             setCharacterPic(res.data.sprites.other["official-artwork"].front_default);
             
             setData(res.data);
-            addRecentlyViewed(res.data.id);
+            setInitialSavedState(isMyCharacter(res.data.id));
             getColorFromURL(res.data.sprites.other["official-artwork"].front_default).then(colors => {
                 setMainColor(colors.background);
             })
@@ -60,6 +66,8 @@ export default (props) => {
         })
         .catch((err) => console.log(err))
     };
+
+
     const sortMovesArray = (array) => {
         return array.sort((a, b) => {
             let nameA = a.move.name.toLowerCase();
@@ -77,51 +85,15 @@ export default (props) => {
     const selectedPage = (event) => {
         setCurrentPage(event.nativeEvent.position);
     }
-
-    const addRecentlyViewed = (id) => {
-        Storage.getItem({ key: '@pokefinder_view_data'}).then((value) => {
-            value = value ? JSON.parse(value).reverse() : [];
-            //add if is in array
-            if (!value.includes(id)) {
-                value.push(id);
-                
-                Storage.setItem({ key: '@pokefinder_view_data', value: JSON.stringify(value) }).then(_ => {console.log("salvo!")})
-                .catch((err)=> {console.log(err);});
-
-            }
-            //max 5 elements
-            if (value.length > 5) {
-                value.shift();
-                Storage.setItem({ key: '@pokefinder_view_data', value: JSON.stringify(value.filter(e => e !== id)) }).then(_ => {console.log("removido!")})
-                    .catch((err)=> {console.log(err);});
-            }
-        })
-        .catch((err)=> {console.log(err);});
-    };
     
-
-
     const saveUnsave = (save) => {
         if (save) {
-            Storage.getItem({ key: '@pokefinder_data'}).then((value) => {  
-                value = value != null ? JSON.parse(value) : [];
-                value = [...value, data.id ];
-                value = JSON.stringify(value);
-                Storage.setItem({ key: '@pokefinder_data', value: value }).then(_ => {console.log("salvo!")})
-                    .catch((err)=> {Alert.alert("Unable to save.")});
-                })
-                .catch((err)=> {Alert.alert("Unable to save.");});
+           const character = { url: `https://pokeapi.co/api/v2/pokemon/${data.id}/`, name: data.name, image: data.sprites.other["official-artwork"].front_default };
+           insertCharacter(data.id, character);
+           setInitialSavedState(true);
         } else {
-            Storage.getItem({ key: '@pokefinder_data'}).then((value) => {
-                value = JSON.parse(value);
-                console.log({value})
-                //console.log(value)
-                
-                value = JSON.stringify(value.filter(e => e !== data.id));
-                Storage.setItem({ key: '@pokefinder_data', value }).then(_ => {console.log("removido!")})
-                    .catch((err)=> {Alert.alert("Unable to remove.");});
-                })
-                .catch((err)=> {Alert.alert("Unable to remove.");});
+            removeCharacter(data.id);
+            setInitialSavedState(false);
         }
     }
 
@@ -130,8 +102,10 @@ export default (props) => {
       };
 
     return (
+
         <ScrollView style={styles.container}>
-          {characterPic && <CharacterHeader name={data && data.name} color={mainColor} image={characterPic} saveFunction={saveUnsave} /> }
+            <CustomHeader back navigation={props.navigation} color={mainColor} text="Pokemon" />
+          {characterPic && <CharacterHeader name={data && data.name} color={mainColor} image={characterPic} saveFunction={saveUnsave} isSavedState={ initialSavedState } /> }
 
             <PaginationManager number={4} selectedPage={currentPage} color={mainColor} />
 

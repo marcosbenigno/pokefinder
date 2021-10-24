@@ -11,10 +11,8 @@ import RoundSvg from './RoundSvg';
 
 export default props => {
 
-    const [isCharacterSaved, setIsCharacterSaved] = useState(false);
     const toggleIsCharacterSaved = () => {
-        props.saveFunction(!isCharacterSaved);
-        setIsCharacterSaved((item) => !item);
+        props.saveFunction(!props.isSavedState);
     };
 
     
@@ -25,7 +23,7 @@ export default props => {
                 <View style={styles.header}>
                     <CharacterName name={props.name && props.name.replace(/-/g, " ")} />
                     <TouchableOpacity styles={styles.saveCharacterButton} onPress={toggleIsCharacterSaved}>
-                    {isCharacterSaved ? 
+                    {props.isSavedState ? 
                         ( <Image source={require(`../../assets/characterSaved.png`)} style={styles.icon}  />)
                         :
                         ( <Image source={require(`../../assets/characterNotSaved.png`)} style={styles.icon}  />)
@@ -35,7 +33,7 @@ export default props => {
                 <Image source={{uri: props.image }} style={styles.artwork} />
             </View>
             <View style={{position: "relative", marginTop: -0.5, width: "100%", height: 49 }}>
-                <RoundSvg color={props.color} />
+                <RoundSvg color={props.color || "#C60B0B"} />
             </View>
         </View>
 
