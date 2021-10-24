@@ -9,6 +9,7 @@ import {
   View,
   Text
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 
 import CommonStyles from '../CommonStyles';
 import Card from '../components/Card';
@@ -122,13 +123,19 @@ export default props => {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      { false && <TouchableOpacity style={{backgroundColor: "blue"}} onPress={navigateToSearch} ><Text>Busca</Text></TouchableOpacity> }
+  
+    <ScrollView  contentContainerStyle={styles.container}>
+      <View style={styles.searchButtonContainer}>
+        <TouchableOpacity style={styles.searchButton} onPress={navigateToSearch} >
+          <Icon name="search" color="#000" size={20} />
+          <Text style={styles.searchButtonText}>Search for a resource.</Text>
+        </TouchableOpacity>
+      </View>
 
-    { suggestionCharacters.length == 5 &&  (<><DefaultTitle title="Suggenstions" />
+    { suggestionCharacters.length > 0 &&  (<><DefaultTitle title="Suggenstions" />
       <FlatList
         
-        data={suggestionCharacters.length == 5 ? suggestionCharacters : []}
+        data={suggestionCharacters.length > 0 ? suggestionCharacters : []}
         renderItem={({item}) => <Card text={item.name} image={item.sprites.other["official-artwork"].front_default} content={item} onPress={navigateToCharacter}   />}
         keyExtractor={item => Math.random()}
         horizontal
@@ -159,16 +166,32 @@ export default props => {
         }
     </View></>)
     }
-
-
-
     </ScrollView>
+ 
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flexGrow: 1
   },
+  searchButtonContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  searchButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%", 
+    borderRadius: 10,
+    padding: 6,
+    margin: 8,
+    backgroundColor: "#cdd0d4"
+  },
+  searchButtonText: {
+    fontSize: 16,
+    marginHorizontal: 5
+  }
 });
-

@@ -71,7 +71,7 @@ export default (props) => {
     const sortMovesArray = (array) => {
         return array.sort((a, b) => {
             let nameA = a.move.name.toLowerCase();
-            let nameB  =b.move.name.toLowerCase();
+            let nameB = b.move.name.toLowerCase();
             if (nameA < nameB) {
              return -1;
             }
@@ -102,7 +102,7 @@ export default (props) => {
       };
 
     return (
-
+        <View style={{flex: 1}}>
         <ScrollView style={styles.container}>
             <CustomHeader back navigation={props.navigation} color={mainColor} text="Pokemon" />
           {characterPic && <CharacterHeader name={data && data.name} color={mainColor} image={characterPic} saveFunction={saveUnsave} isSavedState={ initialSavedState } /> }
@@ -200,6 +200,7 @@ export default (props) => {
 
             </PagerView>
         </ScrollView>
+        </View>
     );
 }
 const styles = StyleSheet.create({

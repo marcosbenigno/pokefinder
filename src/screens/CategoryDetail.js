@@ -18,11 +18,12 @@ export default (props) => {
     const [title, setTitle] = useState(props.route.params.data.title);
     const [contentType, setContentType] = useState(props.route.params.data.contentType);
     const [arrayOfContent, setArrayOfContent] = useState([]);
-    const [urlToFetch, setUrlToFetch] = useState(props.route.params.data.content.url || props.route.params.url);
+    const [urlToFetch, setUrlToFetch] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(()=> {
-        if (props.route.params.data || props.route.params.url) {
+        console.log(props.route.params.data.url)
+        if (urlToFetch) {
             setIsLoading(true);
             if (title == "Ability" || title == "Type") {
                 axios.get(urlToFetch).then((res)=>{
@@ -36,7 +37,11 @@ export default (props) => {
                 })   
             }
         }
-    }, [props.route.content]);
+    }, [urlToFetch]);
+
+    useEffect(()=>{
+        setUrlToFetch(props.route.params.data.url || props.route.params.data.content.url || props.route.params.url || props.route.url, props.route.params.data.url);
+    }, [])
 
 
     const navigateToCharacter = (url) => {

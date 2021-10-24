@@ -5,6 +5,7 @@ import { TextInput } from "react-native";
 import TabSelector from "../components/TabSelector";
 import MultiuseCard from "../components/MultiuseCard";
 import axios from "axios";
+import CommonStyles from "../CommonStyles";
 
 
 export default props => {
@@ -23,12 +24,15 @@ export default props => {
         if (searchString.length != 0) {
             setError('');
             setIsLoading(true);
+            console.log(`https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`)
             axios.get(`https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`)
                 .then((res) => {
-                    if (items[selectedTab] == "Ability" || items[selectedTab] == "Type") {
-                            setArrayOfContent(res.data.pokemon);
-                    } else if (items[selectedTab] == "Move") {
-                            setArrayOfContent(res.data.learned_by_pokemon);
+                    if (items[selectedTab] == "Pokemon") {
+                            setArrayOfContent({...res.data, urlToFetch: `https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`});
+                           
+                     
+                    } else if (items[selectedTab] == "Type" || items[selectedTab] == "Move" || items[selectedTab] == "Ability") {
+                        setArrayOfContent({...res.data, urlToFetch: `https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`});
                     }
 
                     setIsLoading(false);
@@ -36,9 +40,12 @@ export default props => {
                 .catch((err) => {
                     if (err.response.status == 404) {
                         setError("Not found.");
+                        setArrayOfContent({});
+
                         console.log("err")
                     } else {
                         setError("Internal error.");
+                        setArrayOfContent({});
                     }
                 })
                 setIsLoading(false);
@@ -52,6 +59,14 @@ export default props => {
            
         };
 
+        const getRandomColor = () => {
+            return CommonStyles.colors[(parseInt(Math.random() * (CommonStyles.colors.length - 1)))];
+        }
+
+        const navigateToDetail = (data) => { 
+            props.navigation.push("Detail", {data});
+          };
+
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -60,24 +75,45 @@ export default props => {
             </View>
             <TabSelector items={items} onPress={selectTab} />
 
-            {  arrayOfContent.length > 0 && (items[selectedTab] == "Ability" || items[selectedTab] == "Type") ?
-                arrayOfContent.map((item, index)=>
-                (<MultiuseCard key={index} text={item.pokemon.name} urlToFetch={item.pokemon.url} contentType={contentType} title={title} onPress={navigateToCharacter} />)
-                )
+
+
+            {  arrayOfContent.name && (items[selectedTab] == "Pokemon") ?
+                
+                (<MultiuseCard text={arrayOfContent.name} urlToFetch={arrayOfContent.urlToFetch} color={getRandomColor()} onPress={navigateToCharacter} />)
+                
                 
                 : false
             }
 
-            {  arrayOfContent.length > 0 && items[selectedTab] == "Move"?
-                arrayOfContent.map((item, index)=>
-                (<MultiuseCard key={index} text={item.name} urlToFetch={item.url} contentType={contentType} title={title} onPress={navigateToCharacter} />)
-                )
+
+
+            {   arrayOfContent.name && (items[selectedTab] == "Type") ?
+                
+                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Type" color={getRandomColor()}/>)
+                
                 
                 : false
-            }   
+            }
+
+
+{           arrayOfContent.name && (items[selectedTab] == "Move") ?
+                
+                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Move" color={getRandomColor()}/>)
+                
+                
+                : false
+            }
+
+{           arrayOfContent.name && (items[selectedTab] == "Ability") ?
+                
+                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Ability" color={getRandomColor()}/>)
+                
+                
+                : false
+            }
 
             {
-                arrayOfContent.length == 0 && !isLoading ? (<Text style={{marginVertical: 20}}>No content to show.</Text>) : false
+                !arrayOfContent.name && !isLoading ? (<Text style={{marginVertical: 20}}>No content to show.</Text>) : false
             }  
             {
                 isLoading ? (<Text style={{marginVertical: 20}}>Loading...</Text>) : false
