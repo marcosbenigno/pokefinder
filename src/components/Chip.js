@@ -1,12 +1,21 @@
 import React from "react";
 
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import Icon from 'react-native-vector-icons/dist/Feather';
+import Icon from 'react-native-vector-icons/Feather';
 
 export default props => {
+
+    const onPressFunction = () => {
+        props.onPress({
+            contentType: props.text.replace(/-/g, " "),
+            title: props.title,
+            content: props.data
+        })
+    }
+    
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#C60B0B", }]}>
-            <Text style={styles.text}>{props.text}</Text>
+        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#C60B0B", }]} onPress={onPressFunction}>
+            <Text style={styles.text}>{props.text.replace(/-/g, " ")}</Text>
             <Icon name="chevron-right" style={styles.icon} size={20} color="#000" />
         </TouchableOpacity>
     )

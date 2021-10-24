@@ -17,11 +17,11 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: 8,
         marginRight: 10,
-        marginLeft: 20,
+        marginLeft: 10,
     },
     text: {
         color: "#000",
         fontWeight: "500",
-        fontSize: 14
+        fontSize: 16
     }
 })

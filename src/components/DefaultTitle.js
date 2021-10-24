@@ -7,7 +7,7 @@ export default props => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>{props.title}</Text>
+            <Text style={styles.text}>{props.title.replace(/-/g, " ")}</Text>
         </View>
     );
 }
@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     text: {
         color: "#000",
         fontWeight: "900",
-        fontSize: 24
+        fontSize: 24,
+        textTransform: "capitalize"
     }
 })

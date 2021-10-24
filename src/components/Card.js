@@ -11,17 +11,23 @@ export default props => {
     useEffect(() => {
         if (props.image) {
             getColorFromURL(props.image).then(colors => {
-                setBackgroundColor(colors.primary)
+                setBackgroundColor(colors.background)
             })
             .catch(err => console.log(err));
 
         }
     }, [props.image])
+
+    const onPressFunction = () => {
+        if (props.content) {
+            props.onPress({...props.content, bgColor: backgroundColor});
+        }
+    }
     
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor }]}>
+        <TouchableOpacity style={[styles.container, { backgroundColor }]} onPress={onPressFunction}>
             <Image source={{uri: props.image}} style={styles.image} />
-            <Text style={styles.text}>{props.text}</Text>
+            <Text style={styles.text}>{props.text.replace(/-/g, " ")}</Text>
         </TouchableOpacity>
     );
 }
@@ -45,6 +51,7 @@ const styles = StyleSheet.create({
     text: {
         color: "#fff",
         fontWeight: "700",
-        fontSize: 16
+        fontSize: 16,
+        textTransform: "capitalize"
     }
 })

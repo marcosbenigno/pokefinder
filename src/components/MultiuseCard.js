@@ -5,9 +5,18 @@ import { TouchableOpacity, Text, StyleSheet, Dimensions, View } from "react-nati
 
 export default props => {
 
-    
+    const onPressFunction = () => {
+        props.onPress({
+            contentType: props.text.replace(/-/g, " "),
+            title: props.title,
+            content: props.data,
+            url: props.urlToFetch
+        })
+       
+    }
+
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#C60B0B" }]}>
+        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#7FADD1" }]} onPress={onPressFunction}>
             <View style={styles.iconContainer}>
             <Icon name="chevron-right" style={styles.icon} size={20} color="#000" />
             </View>    

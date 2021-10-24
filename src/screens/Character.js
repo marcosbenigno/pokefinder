@@ -4,7 +4,8 @@ import {
   StyleSheet,
   View,
   Text,
-  useWindowDimensions
+  useWindowDimensions,
+  Alert
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
@@ -12,43 +13,53 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import axios from 'axios';
 import { getColorFromURL } from 'rn-dominant-color';
 
-
-
 import Chip from '../components/Chip';
-import CardMoves from '../components/CardMoves';
+import MultiuseCard from '../components/MultiuseCard';
 import VerticalIndicator from '../components/VerticalIndicator';
 import PaginationManager from '../components/PaginationManager';
 import CharacterHeader from '../components/CharacterHeader';
+import { Storage } from 'expo-storage'
 
 
-export default props => {
-    const [characterPic, setCharacterPic] = useState("https://color-hex.org/colors/c60b0b.png");
-    const [mainColor, setMainColor] = useState('#C60B0B');
-
+export default (props) => {
+    const [characterPic, setCharacterPic] = useState(null);
+    const [mainColor, setMainColor] = useState(null);
     const [data, setData] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
 
     const { height } = useWindowDimensions();
 
-    useEffect(()=> {
-        axios.get("https://pokeapi.co/api/v2/pokemon/385/").then((res)=>{
-            setData(res.data);
+    useEffect(()=>{
+
+        if (props.route.params.url) {
+            setDataFromUrl();
+        } else if (props.route.params.data) {
+            setDataFromNavigation();
+        } 
+    },[]);
+
+    const setDataFromNavigation = () => {
+        setCharacterPic(props.route.params.data.sprites.other["official-artwork"].front_default);
+        setMainColor(props.route.params.data.bgColor);
+        setData(props.route.params.data);
+        addRecentlyViewed(props.route.params.data.id);
+    };
+
+    const setDataFromUrl = () => {
+        axios.get(props.route.params.url)
+        .then((res) => {
             setCharacterPic(res.data.sprites.other["official-artwork"].front_default);
-            //console.log(res.data.types.type.name)//url)
-        })
-        .catch((err)=>console.log(err))
-    }, [])
-    
-    useEffect(() => {
-        if (characterPic) {
-            getColorFromURL(characterPic).then(colors => {
-                setMainColor(colors.primary)
+            
+            setData(res.data);
+            addRecentlyViewed(res.data.id);
+            getColorFromURL(res.data.sprites.other["official-artwork"].front_default).then(colors => {
+                setMainColor(colors.background);
             })
-            .catch(err => console.log(err));
-
-        }
-    }, [characterPic])
-
+            .catch((err) => setMainColor("#7FADD1"));
+            
+        })
+        .catch((err) => console.log(err))
+    };
     const sortMovesArray = (array) => {
         return array.sort((a, b) => {
             let nameA = a.move.name.toLowerCase();
@@ -67,9 +78,60 @@ export default props => {
         setCurrentPage(event.nativeEvent.position);
     }
 
+    const addRecentlyViewed = (id) => {
+        Storage.getItem({ key: '@pokefinder_view_data'}).then((value) => {
+            value = value ? JSON.parse(value).reverse() : [];
+            //add if is in array
+            if (!value.includes(id)) {
+                value.push(id);
+                
+                Storage.setItem({ key: '@pokefinder_view_data', value: JSON.stringify(value) }).then(_ => {console.log("salvo!")})
+                .catch((err)=> {console.log(err);});
+
+            }
+            //max 5 elements
+            if (value.length > 5) {
+                value.shift();
+                Storage.setItem({ key: '@pokefinder_view_data', value: JSON.stringify(value.filter(e => e !== id)) }).then(_ => {console.log("removido!")})
+                    .catch((err)=> {console.log(err);});
+            }
+        })
+        .catch((err)=> {console.log(err);});
+    };
+    
+
+
+    const saveUnsave = (save) => {
+        if (save) {
+            Storage.getItem({ key: '@pokefinder_data'}).then((value) => {  
+                value = value != null ? JSON.parse(value) : [];
+                value = [...value, data.id ];
+                value = JSON.stringify(value);
+                Storage.setItem({ key: '@pokefinder_data', value: value }).then(_ => {console.log("salvo!")})
+                    .catch((err)=> {Alert.alert("Unable to save.")});
+                })
+                .catch((err)=> {Alert.alert("Unable to save.");});
+        } else {
+            Storage.getItem({ key: '@pokefinder_data'}).then((value) => {
+                value = JSON.parse(value);
+                console.log({value})
+                //console.log(value)
+                
+                value = JSON.stringify(value.filter(e => e !== data.id));
+                Storage.setItem({ key: '@pokefinder_data', value }).then(_ => {console.log("removido!")})
+                    .catch((err)=> {Alert.alert("Unable to remove.");});
+                })
+                .catch((err)=> {Alert.alert("Unable to remove.");});
+        }
+    }
+
+    const navigateToDetail = (data) => { 
+        props.navigation.push("Detail", {data});
+      };
+
     return (
         <ScrollView style={styles.container}>
-           <CharacterHeader name={data && data.name} color={mainColor} image={characterPic} />
+          {characterPic && <CharacterHeader name={data && data.name} color={mainColor} image={characterPic} saveFunction={saveUnsave} /> }
 
             <PaginationManager number={4} selectedPage={currentPage} color={mainColor} />
 
@@ -81,35 +143,36 @@ export default props => {
                 {/*page 1*/}
                 <View key="0">
                     <Text style={styles.sectionTitle}>About</Text>
-                    <View style={styles.listItem}>
-                        <Text style={styles.label}>Name</Text>
-                        <Text style={styles.text}>{data && data.name.replace(/-/g, " ")}</Text>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.label}>Types</Text>
-                        <View style={{flexDirection: "row", flexWrap: "wrap"}}>
-                            {data && data.types.map((item, index) => (<Chip key={`${Math.random()}`} color={mainColor} text={item.type.name.replace(/-/g, " ")} />))        
-                            }
+                    <ScrollView nestedScrollEnabled={true} >
+                        <View style={styles.listItem}>
+                            <Text style={styles.label}>Name</Text>
+                            <Text style={styles.text}>{data && data.name.replace(/-/g, " ")}</Text>
                         </View>
-                    </View>
-                    <View style={styles.listItem}>
-                        <Text style={styles.label}>Abilities</Text>
-                        <View style={{flexDirection: "row", flexWrap: "wrap"}}>
-                            {data && data.abilities.map((item, index) => (<Chip key={`${Math.random()}`} color={mainColor} text={item.ability.name.replace(/-/g, " ")} />))        
+                        <View style={styles.listItem}>
+                            <Text style={styles.label}>Types</Text>
+                            <View style={{flexDirection: "row", flexWrap: "wrap"}}>
+                                {data && data.types.map((item, index) => (<Chip key={`${Math.random()}`} color={mainColor} text={item.type.name} onPress={navigateToDetail} data={item.type} title={"Type"} />))        
                                 }
+                            </View>
                         </View>
-                    </View>
-
-                    <View style={styles.listItem} >
-                        <View 
-                            style={styles.indicatorContainer}>
-                            <VerticalIndicator number={data && data.height} label="Height" />
-                            <VerticalIndicator number={data && data.weight} label="Weight" />
-                            <VerticalIndicator number={data && data.order} label="Order" />
-                            <VerticalIndicator number={data && data.base_experience} label="Base Experience" />
+                        <View style={styles.listItem}>
+                            <Text style={styles.label}>Abilities</Text>
+                            <View style={{flexDirection: "row", flexWrap: "wrap"}}>
+                                {data && data.abilities.map((item, index) => (<Chip key={`${Math.random()}`} color={mainColor} text={item.ability.name} data={item.ability} title={"Ability"} onPress={navigateToDetail} />))        
+                                    }
+                            </View>
                         </View>
-                    </View>
 
+                        <View style={styles.listItem}>
+                            <View 
+                                style={styles.indicatorContainer}>
+                                <VerticalIndicator number={data && data.height} label="Height" />
+                                <VerticalIndicator number={data && data.weight} label="Weight" />
+                                <VerticalIndicator number={data && data.order} label="Order" />
+                                <VerticalIndicator number={data && data.base_experience} label="Base Experience" />
+                            </View>
+                        </View>
+                    </ScrollView>
                 </View>
 
                 {/*page 2*/}
@@ -118,7 +181,7 @@ export default props => {
                     <ScrollView nestedScrollEnabled={true} >
                         
                         <View style={{flexDirection: "row",  justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap"}}>
-                            {data && sortMovesArray(data.moves).map((item, index) => (<CardMoves key={`${Math.random()}`} color={mainColor} text={item.move.name} />))        
+                            {data && sortMovesArray(data.moves).map((item, index) => (<MultiuseCard key={`${Math.random()}`} color={mainColor} text={item.move.name} url={item.move.url} onPress={navigateToDetail} data={item.move} title={"Move"} />))        
                                 }
                                 
                         </View>
@@ -154,7 +217,7 @@ export default props => {
                     <ScrollView nestedScrollEnabled={true} >
                         
                         <View style={{flexDirection: "row",  justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap"}}>
-                            {data && data.held_items.map((item, index) => (<CardMoves key={`${Math.random()}`} color={mainColor} text={item.item.name} />))}       
+                            {data && data.held_items.map((item, index) => (<MultiuseCard key={`${Math.random()}`} color={mainColor} text={item.item.name} />))}       
                             {data && data.held_items.length === 0 ? (<Text>No items to show.</Text>) : false}
                         </View>
                     </ScrollView>

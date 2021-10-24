@@ -12,7 +12,13 @@ import RoundSvg from './RoundSvg';
 export default props => {
 
     const [isCharacterSaved, setIsCharacterSaved] = useState(false);
-    const toggleIsCharacterSaved = () => setIsCharacterSaved((item) => !item);
+    const toggleIsCharacterSaved = () => {
+        props.saveFunction(!isCharacterSaved);
+        setIsCharacterSaved((item) => !item);
+    };
+
+    
+
     return (
         <View style={styles.container}>
             <View style={[styles.characterHeader, { backgroundColor: props.color || "#C60B0B" }]}>
