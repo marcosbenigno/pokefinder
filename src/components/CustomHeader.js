@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity, StatusBar } from "react-native";
+
 import Icon from "react-native-vector-icons/Feather";
 import CommonStyles from "../CommonStyles";
 
@@ -11,7 +12,7 @@ export default props => {
         if (props.color){
             setColor(props.color);
         }
-    }, [props.color])
+    }, [props.color]);
 
     function getRandomColor() {
         return CommonStyles.colors[(parseInt(Math.random() * (CommonStyles.colors.length - 1)))];
@@ -101,6 +102,4 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
         margin: 0
     }
-
-
-})
+});

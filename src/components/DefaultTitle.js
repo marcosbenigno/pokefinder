@@ -1,6 +1,5 @@
-import React from "react"
-
-import { StyleSheet, View, Text } from "react-native"
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
 
 
 export default props => {
@@ -24,4 +23,4 @@ const styles = StyleSheet.create({
         fontSize: 24,
         textTransform: "capitalize"
     }
-})
+});

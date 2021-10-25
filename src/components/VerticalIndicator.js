@@ -1,7 +1,5 @@
-import React from "react"
-
-import { StyleSheet, View, Text } from "react-native"
-
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
 
 export default props => {
 
@@ -11,7 +9,7 @@ export default props => {
             <Text style={styles.label}>{props.label}</Text>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -31,4 +29,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "600"
     },
-})
+});

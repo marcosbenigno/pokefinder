@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { TextInput } from "react-native";
+import axios from "axios";
+
 import TabSelector from "../components/TabSelector";
 import MultiuseCard from "../components/MultiuseCard";
-import axios from "axios";
+
 import CommonStyles from "../CommonStyles";
 
 
 export default props => {
+
     const [searchString, setSearchString] = useState('');
     const [selectedTab, setSelectedTab] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const items = ["Pokemon", "Type", "Move", "Ability", "Held Items"];
-    const [arrayOfContent, setArrayOfContent] = useState([]);
+    const [objectResult, setobjectResult] = useState([]);
 
     const selectTab = (item) => {
         setSelectedTab(item);
@@ -25,98 +27,85 @@ export default props => {
             let resource = items[selectedTab] == "Held Items" ? "item" :  items[selectedTab];
             setError('');
             setIsLoading(true);
-            axios.get(`https://pokeapi.co/api/v2/${resource.toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`)
+            let url = `https://pokeapi.co/api/v2/${resource.toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`;
+            axios.get(url)
                 .then((res) => {
-                    setArrayOfContent({...res.data, urlToFetch: `https://pokeapi.co/api/v2/${resource.toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`});
-                    
-
+                    setobjectResult({
+                        ...res.data, 
+                        urlToFetch: url
+                    });
                     setIsLoading(false);
                 })
                 .catch((err) => {
                     if (err.response.status == 404) {
                         setError("Not found.");
-                        setArrayOfContent({});
-
-                        console.log("err")
+                        setobjectResult({});
                     } else {
                         setError("Internal error.");
-                        setArrayOfContent({});
+                        setobjectResult({});
                     }
-                })
+                });
                 setIsLoading(false);
-            }
-
-        } ,[searchString]);
-
-        const navigateToCharacter = (url) => {
-            console.log(url)
-            props.navigation.push("Pokemon", url);
-           
-        };
-
-        const getRandomColor = () => {
-            return CommonStyles.colors[(parseInt(Math.random() * (CommonStyles.colors.length - 1)))];
         }
+    } ,[searchString]);
 
-        const navigateToDetail = (data) => { 
-            props.navigation.push("Detail", {data});
-          };
+    const navigateToCharacter = (url) => {
+        props.navigation.push("Pokemon", url);
+    };
+
+    const getRandomColor = () => {
+        return CommonStyles.colors[(parseInt(Math.random() * (CommonStyles.colors.length - 1)))];
+    };
+
+    const navigateToDetail = (data) => { 
+        props.navigation.push("Detail", {data});
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
                 <Icon size={30} name="search" color="#000" />
-                <TextInput style={styles.input} value={searchString} onChangeText={(text) => setSearchString(text)} placeholder="Search for a resource." />
+                <TextInput 
+                    style={styles.input} 
+                    value={searchString} 
+                    onChangeText={(text) => setSearchString(text)} 
+                    placeholder="Enter the name of the element." />
             </View>
+
             <TabSelector items={items} onPress={selectTab} />
 
-
-
-            {  arrayOfContent.name && (items[selectedTab] == "Pokemon") ?
-                
-                (<MultiuseCard text={arrayOfContent.name} urlToFetch={arrayOfContent.urlToFetch} color={getRandomColor()} onPress={navigateToCharacter} />)
-
-                : false
+            { objectResult.name && (items[selectedTab] == "Pokemon") ?
+                (<MultiuseCard 
+                    text={objectResult.name} 
+                    urlToFetch={objectResult.urlToFetch} 
+                    color={getRandomColor()} 
+                    onPress={navigateToCharacter} />)
+                : 
+                false
             }
 
-
-
-            {   arrayOfContent.name && (items[selectedTab] == "Type") ?
-                
-                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Type" color={getRandomColor()}/>)
-
-                : false
-            }
-
-
-{           arrayOfContent.name && (items[selectedTab] == "Move") ?
-                
-                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Move" color={getRandomColor()}/>)
-
-                : false
-            }
-
-{           arrayOfContent.name && (items[selectedTab] == "Ability") ?
-                
-                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Ability" color={getRandomColor()}/>)
-                : false
-            }
-
-{           arrayOfContent.name && (items[selectedTab] == "Held Items") ?
-                
-                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Held Items" color={getRandomColor()}/>)
-                : false
+            { objectResult.name && (items[selectedTab] != "Pokemon") ?
+                (<MultiuseCard 
+                    text={objectResult.name} 
+                    contentType={items[selectedTab]} 
+                    onPress={navigateToDetail} 
+                    urlToFetch={objectResult.urlToFetch} 
+                    data={objectResult} 
+                    title={items[selectedTab]} 
+                    color={getRandomColor()}/>)
+                    : false
             }
 
             {
-                !arrayOfContent.name && !isLoading ? (<Text style={{marginVertical: 20}}>No content to show.</Text>) : false
-            }  
+                !objectResult.name && !isLoading ? (<Text style={{marginVertical: 20}}>No content to show.</Text>) : false
+            }
+            
             {
                 isLoading ? (<Text style={{marginVertical: 20}}>Loading...</Text>) : false
             }  
         </View>
     );
-}
+};
 
 const styles= StyleSheet.create({
     container: {
@@ -141,5 +130,4 @@ const styles= StyleSheet.create({
         color: "#000",
         fontSize: 16
     }
-
 });

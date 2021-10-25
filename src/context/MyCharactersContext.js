@@ -9,35 +9,39 @@ export const MyCharacterProvider = props => {
     const [data, setData] = useState({});
 
     const insertCharacter = (id, character) => {
-            let localData = {...data, [id]: character };
-            Storage.setItem({ key: '@pokefinder_data', value: JSON.stringify(localData) }).then(_ => {console.log("salvo!")})
-                .catch((err)=> {Alert.alert("Unable to save.")});   
-        setData(localData);
+        let localData = { ...data, [id]: character };
+        Storage.setItem({ key: '@pokefinder_data', value: JSON.stringify(localData) })
+            .then(_ => {
+                console.log("Saved!");
+                setData(localData);
+        })
+            .catch((err)=> {Alert.alert("Unable to save.")});   
+        
     };
 
     const removeCharacter = (id) => {
-        let localData = {...data};
+        let localData = { ...data };
         delete localData[id];
-        Storage.setItem({ key: '@pokefinder_data', value: JSON.stringify(localData) }).then(_ => {console.log("removido!")})
-        .catch((err)=> {Alert.alert("Unable to remove.");});
-        setData(localData);
+        Storage.setItem({ key: '@pokefinder_data', value: JSON.stringify(localData) })
+            .then(_ => {
+                setData(localData); 
+                console.log("Removed!")
+            })
+            .catch((err)=> {Alert.alert("Unable to remove.");});
+        
     };
 
     const updateMyCharacters = () => {
-        Storage.getItem({ key: '@pokefinder_data'}).then((value) => {  
-            value = value != null ? JSON.parse(value) : {};
-            setData(value);
-            console.log(value);
+        Storage.getItem({ key: '@pokefinder_data'})
+            .then((value) => {  
+                value = value != null ? JSON.parse(value) : {};
+                setData(value);
             })
-            .catch((err)=> {Alert.alert("Unable to save.");});
+            .catch((err)=> {console.log("Unable to get characters.");});
     };
 
-    const isMyCharacter = (id) => {
-        console.log(data.hasOwnProperty(id))
-        return data.hasOwnProperty(id);
-    }
-
-
+    const isMyCharacter = (id) => data.hasOwnProperty(id);
+    
     return (
         <MyCharacterContext.Provider value={{
             data,
@@ -49,6 +53,6 @@ export const MyCharacterProvider = props => {
             {props.children}
         </MyCharacterContext.Provider>
     )
-}
+};
 
 export default MyCharacterContext;

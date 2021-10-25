@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity, Image, Text, StyleSheet, Dimensions } from "react-native";
 
-import { TouchableOpacity, Image, Text, StyleSheet, Dimensions } from "react-native"
 import { getColorFromURL } from 'rn-dominant-color';
 
 export default props => {
 
-    
-    const [backgroundColor, setBackgroundColor] = useState('#C60B0B');
+    const [backgroundColor, setBackgroundColor] = useState('#DE4141');
     
     useEffect(() => {
         if (props.image) {
             getColorFromURL(props.image).then(colors => {
-                setBackgroundColor(colors.background)
+                setBackgroundColor(colors.background);
             })
             .catch(err => console.log(err));
-
         }
-    }, [props.image])
+    }, [props.image]);
 
     const onPressFunction = () => {
         if (props.content) {

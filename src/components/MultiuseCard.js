@@ -11,14 +11,11 @@ export default props => {
             title: props.title,
             content: props.data,
             url: props.urlToFetch
-        })
-
-        console.log({url: props.urlToFetch})
-       
-    }
+        });
+    };
 
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#7FADD1" }]} onPress={onPressFunction}>
+        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#DE4141" }]} onPress={onPressFunction}>
             <View style={styles.iconContainer}>
             <Icon name="chevron-right" style={styles.icon} size={20} color="#000" />
             </View>    
@@ -29,7 +26,6 @@ export default props => {
 
 const styles = StyleSheet.create({
     container: {
-      
         width: Dimensions.get("window").width * 0.25,
         height: Dimensions.get("window").width * 0.25,
         borderRadius: 15,
@@ -52,4 +48,4 @@ const styles = StyleSheet.create({
         width: "100%",
         padding: 2
     }
-})
+});

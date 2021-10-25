@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -13,27 +13,26 @@ export default props => {
 
     const toggleIsCharacterSaved = () => {
         props.saveFunction(!props.isSavedState);
-    };
-
-    
+    };  
 
     return (
         <View style={styles.container}>
-            <View style={[styles.characterHeader, { backgroundColor: props.color || "#C60B0B" }]}>
+            <View style={[styles.characterHeader, { backgroundColor: props.color || "#DE4141" }]}>
                 <View style={styles.header}>
                     <CharacterName name={props.name && props.name.replace(/-/g, " ")} />
                     <TouchableOpacity styles={styles.saveCharacterButton} onPress={toggleIsCharacterSaved}>
-                    {props.isSavedState ? 
-                        ( <Image source={require(`../assets/characterSaved.png`)} style={styles.icon}  />)
+                    {
+                        props.isSavedState ? 
+                            (<Image source={require(`../assets/characterSaved.png`)} style={styles.icon}  />)
                         :
-                        ( <Image source={require(`../assets/characterNotSaved.png`)} style={styles.icon}  />)
+                            (<Image source={require(`../assets/characterNotSaved.png`)} style={styles.icon}  />)
                     }   
                     </TouchableOpacity>
                 </View>
                 <Image source={{uri: props.image }} style={styles.artwork} />
             </View>
             <View style={{position: "relative", marginTop: -0.5, width: "100%", height: 49 }}>
-                <RoundSvg color={props.color || "#C60B0B"} />
+                <RoundSvg color={props.color || "#DE4141"} />
             </View>
         </View>
 

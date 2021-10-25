@@ -12,29 +12,51 @@ export default props => {
 
     return (
         <View style={styles.container}>
-
             {
                props.items && props.items.map((item, index) => {
                     if (index == 0) {
-                        return (<TouchableOpacity key={index} style={[styles.tab, { borderTopLeftRadius: 5 }, index == selected ? {  backgroundColor: "#cdd0d4" } : null]} onPress={() => {onPressFunction(index)}}>
-                        <Text style={styles.tabText}>{item}</Text>
+
+                        return (
+                            <TouchableOpacity 
+                                key={index} 
+                                style={[styles.tab, { borderTopLeftRadius: 5 }, 
+                                    index == selected ? 
+                                    {  backgroundColor: "#cdd0d4" } : null]} 
+                                onPress={() => {onPressFunction(index)}}>
+
+                                <Text style={styles.tabText}>{item}</Text>
+
                         </TouchableOpacity> );
+
                     } else if (index == props.items.length - 1) {
-                        return (<TouchableOpacity key={index} style={[styles.tab, { borderTopRightRadius: 5 }, index == selected ? {  backgroundColor: "#cdd0d4" } : null]} onPress={() => {onPressFunction(index)}}>
-                        <Text style={styles.tabText}>{item}</Text>
-                        </TouchableOpacity> );
+
+                        return (
+                            <TouchableOpacity 
+                                key={index} 
+                                style={[styles.tab, { borderTopRightRadius: 5 }, index == selected ? 
+                                    {  backgroundColor: "#cdd0d4" } : null]} 
+                                onPress={() => {onPressFunction(index)}}>
+
+                                <Text style={styles.tabText}>{item}</Text>
+
+                            </TouchableOpacity> );
+
                     }
-                    return (<TouchableOpacity key={index} style={[styles.tab, index == selected ? {  backgroundColor: "#cdd0d4" } : null]} onPress={() => {onPressFunction(index)}}>
-                        <Text style={styles.tabText}>{item}</Text>
-                        </TouchableOpacity> );
-                    
+                    return (
+                        <TouchableOpacity 
+                            key={index} 
+                            style={[styles.tab, index == selected ? 
+                            {  backgroundColor: "#cdd0d4" } : null]} 
+                            onPress={() => {onPressFunction(index)}}>
+
+                            <Text style={styles.tabText}>{item}</Text>
+                        </TouchableOpacity> );         
                 })
             }
-
-            
+    
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {

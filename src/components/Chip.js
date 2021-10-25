@@ -1,6 +1,6 @@
 import React from "react";
-
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+
 import Icon from 'react-native-vector-icons/Feather';
 
 export default props => {
@@ -9,12 +9,13 @@ export default props => {
         props.onPress({
             contentType: props.text.replace(/-/g, " "),
             title: props.title,
-            content: props.data
+            content: props.data,
+            url: props.urlToFetch
         })
-    }
+    };
     
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#C60B0B", }]} onPress={onPressFunction}>
+        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#DE4141", }]} onPress={onPressFunction}>
             <Text style={styles.text}>{props.text.replace(/-/g, " ")}</Text>
             <Icon name="chevron-right" style={styles.icon} size={20} color="#000" />
         </TouchableOpacity>
@@ -23,7 +24,6 @@ export default props => {
 
 const styles = StyleSheet.create({
     container: {
-
         paddingVertical: 5,
         paddingHorizontal: 15,
         flexDirection: "row",
@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
         textTransform: "capitalize"
-
     },
     icon: {
   

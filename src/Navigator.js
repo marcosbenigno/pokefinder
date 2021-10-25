@@ -9,8 +9,8 @@ import CategoryDetail from './screens/CategoryDetail';
 import Search from './screens/Search';
 import CustomHeader from './components/CustomHeader';
 import MyCharacters from './screens/MyCharacters';
-import { MyCharacterProvider } from './context/MyCharactersContext';
 import ShowAllAttributes from './screens/ShowAllAttributes';
+import { MyCharacterProvider } from './context/MyCharactersContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,12 +19,30 @@ function App() {
     <MyCharacterProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={Home} options={{header: (props) => <CustomHeader myPokemon {...props}text="Pokefinder" /> }} />
-          <Stack.Screen name="Pokemon" component={Character} options={{headerShown: false}} />
-          <Stack.Screen name="Detail" component={CategoryDetail} options={{header: (props) => <CustomHeader back  {...props} text="Details" /> }} />
-          <Stack.Screen name="Search" component={Search} options={{header: (props) => <CustomHeader back  {...props} text="Search" /> }} />
-          <Stack.Screen name="MyCharacters" component={MyCharacters} options={{header: (props) => <CustomHeader back  {...props} text="My Pokemons" /> }} />
-          <Stack.Screen name="ShowAll" component={ShowAllAttributes} options={{header: (props) => <CustomHeader back  {...props} text="Show All" /> }} />
+          <Stack.Screen 
+            name="Home" 
+            component={Home} 
+            options={{header: (props) => <CustomHeader myPokemon {...props} text="Pokefinder" /> }} />
+          <Stack.Screen 
+            name="Pokemon" 
+            component={Character} 
+            options={{headerShown: false}} />
+          <Stack.Screen 
+            name="Detail" 
+            component={CategoryDetail} 
+            options={{header: (props) => <CustomHeader back  {...props} text="Details" /> }} />
+          <Stack.Screen 
+            name="Search" 
+            component={Search} 
+            options={{header: (props) => <CustomHeader back  {...props} text="Search" /> }} />
+          <Stack.Screen 
+            name="MyCharacters" 
+            component={MyCharacters} 
+            options={{header: (props) => <CustomHeader back  {...props} text="My Pokemons" /> }} />
+          <Stack.Screen 
+            name="ShowAll" 
+            component={ShowAllAttributes} 
+            options={{header: (props) => <CustomHeader back  {...props} text="Show All" /> }} />
         </Stack.Navigator>
       </NavigationContainer>
     </MyCharacterProvider>
