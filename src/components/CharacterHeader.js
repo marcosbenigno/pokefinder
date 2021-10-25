@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         flexGrow: 1
     },
     characterHeader: {
-        height: 350,
+        height: 300,
         width: "100%",
         justifyContent: "flex-end",
         alignItems: "center"
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     },
     artwork: {
         width: "100%",
-        height: "75%",
+        height: "80%",
         resizeMode: "contain"
     },
 

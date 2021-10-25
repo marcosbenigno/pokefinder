@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import Toast from 'react-native-toast-message';
 
 import axios from 'axios';
 import { getColorFromURL } from 'rn-dominant-color';
@@ -33,6 +34,7 @@ export default (props) => {
     const [movesArray, setMovesArray] = useState([]);
     const [movesDisplayArray, setMovesDisplayArray] = useState([]);
     const [offset, setOffset] = useState(0);
+    const [titles, setTitles] = useState(["About", "Moves", "Stats", "Held Items"]);
 
     const { insertCharacter, removeCharacter, isMyCharacter } = useContext(MyCharacterContext);
 
@@ -75,20 +77,6 @@ export default (props) => {
                 .catch((err) => {console.log(err);});
     };
 
-    const sortMovesArray = (array) => {
-        return array.sort((a, b) => {
-            let nameA = a.move.name.toLowerCase();
-            let nameB = b.move.name.toLowerCase();
-            if (nameA < nameB) {
-             return -1;
-            }
-            if (nameA > nameB) {
-             return 1;
-            }
-            return 0;
-           });
-    };
-
     const selectedPage = (event) => {
         setCurrentPage(event.nativeEvent.position);
     };
@@ -102,10 +90,25 @@ export default (props) => {
             };
            insertCharacter(data.id, character);
            setInitialSavedState(true);
+           Toast.show({
+            type: 'success',
+            text1: 'Saved',
+            text2: `${capitalizeFirstLetter(data.name.replace(/-/g, " "))} was saved as your Pokemon!`
+          });
+      
         } else {
             removeCharacter(data.id);
             setInitialSavedState(false);
+            Toast.show({
+                type: 'error',
+                text1: 'Removed',
+                text2: `${capitalizeFirstLetter(data.name.replace(/-/g, " "))} was removed from your Pokemons.`
+              });
         }
+    };
+
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
     const navigateToDetail = (data) => { 
@@ -145,7 +148,7 @@ export default (props) => {
                         saveFunction={saveUnsave} 
                         isSavedState={ initialSavedState } />)
                 }
-
+                <Text style={styles.sectionTitle}>{titles[currentPage]}</Text>
                 <PaginationManager number={4} selectedPage={currentPage} color={mainColor} />
 
                 <PagerView 
@@ -155,8 +158,8 @@ export default (props) => {
 
                     {/*page 1*/}
                     <View key="0">
-                        <Text style={styles.sectionTitle}>About</Text>
-                        <ScrollView nestedScrollEnabled={true} >
+                        
+                        <ScrollView nestedScrollEnabled={true} contentContainerStyle={{borderEndColor: mainColor, borderEndWidth: 8}} >
                             <View style={styles.listItem}>
                                 <Text style={styles.label}>Name</Text>
                                 <Text style={styles.text}>{data && data.name.replace(/-/g, " ")}</Text>
@@ -178,7 +181,6 @@ export default (props) => {
                             </View>
 
                             <View style={styles.listItem}>
-                                <Text style={styles.label}>Abilities</Text>
                                 <View style={{flexDirection: "row", flexWrap: "wrap"}}>
                                     {data && data.abilities.map((item, index) => 
                                         (<Chip 
@@ -206,8 +208,7 @@ export default (props) => {
 
                     {/*page 2*/}
                     <View style={{flexGrow: 1 }} key="1">
-                        <Text style={styles.sectionTitle}>Moves</Text>
-                        <ScrollView nestedScrollEnabled={true} >
+                        <ScrollView nestedScrollEnabled={true} contentContainerStyle={{borderEndColor: mainColor, borderEndWidth: 8}} >
                             
                             <View style={styles.multiuseCardsContainer}>
                                 {movesDisplayArray.length > 0 && movesDisplayArray.map((item, index) => 
@@ -237,29 +238,29 @@ export default (props) => {
 
                     {/*page 3*/}
                     <View style={{flexGrow: 1}} key="2">
-                        <Text style={styles.sectionTitle}>Stats</Text>
-                        <View style={styles.statsContainer}>
-                            { data && data.stats.map((item, index)=>
-                            (<View key={index} style={{alignItems: "center", marginVertical: 15, marginHorizontal: 20}}>
-                                <AnimatedCircularProgress
-                                    size={50}
-                                    width={8}
-                                    fill={item.base_stat}
-                                    tintColor={mainColor}
-                                    backgroundColor="#000">
-                                            {(fill) => (<Text>{ fill }</Text>)}
-                                    </AnimatedCircularProgress>
-                                    <Text style={styles.statsCaption}>{item.stat.name.replace(/-/g," ")} </Text>
+                        <ScrollView nestedScrollEnabled={true} contentContainerStyle={{borderEndColor: mainColor, borderEndWidth: 8}} >
+                            <View style={styles.statsContainer}>
+                                { data && data.stats.map((item, index)=>
+                                (<View key={index} style={{alignItems: "center", marginVertical: 15, marginHorizontal: 20}}>
+                                    <AnimatedCircularProgress
+                                        size={50}
+                                        width={8}
+                                        fill={item.base_stat}
+                                        tintColor={mainColor}
+                                        backgroundColor="#000">
+                                                {(fill) => (<Text>{ fill }</Text>)}
+                                        </AnimatedCircularProgress>
+                                        <Text style={styles.statsCaption}>{item.stat.name.replace(/-/g," ")} </Text>
+                                </View>
+                                ))   
+                                }
                             </View>
-                            ))   
-                            }
-                        </View>
+                        </ScrollView>
                     </View>
 
                     {/*page 4*/}
                     <View style={{flexGrow: 1}} key="3">
-                        <Text style={styles.sectionTitle}>Held Items</Text>
-                        <ScrollView nestedScrollEnabled={true} >
+                        <ScrollView nestedScrollEnabled={true} contentContainerStyle={{borderEndColor: mainColor, borderEndWidth: 8, flexGrow: 1}} >
                             <View style={styles.multiuseCardsContainer}>
                                 {data && data.held_items.map((item, index) => 
                                     (<MultiuseCard 

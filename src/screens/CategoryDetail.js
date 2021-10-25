@@ -11,8 +11,8 @@ import axios from 'axios';
 
 import DefaultTitle from '../components/DefaultTitle';
 import SubtitleDefault from '../components/SubtitleDefault';
-import MultiuseCard from '../components/MultiuseCard';
 import CommonStyles from '../CommonStyles';
+import Card from '../components/Card';
 
 
 export default (props) => {
@@ -83,34 +83,31 @@ export default (props) => {
             <SubtitleDefault subtitle={`Pokemons with this feature:`} />
             <ScrollView contentContainerStyle={{flexGrow: 1, justifyContent: "flex-start", alignItems: "center", width: "100%"}}>
                 <View style={styles.itemsContainer}>
-                    {   
+                    {
                         arrayToDisplay.length > 0 && (title == "Ability" || title == "Type" || title == "Held Items") ?
                         arrayToDisplay.map((item, index)=>
-                            (<MultiuseCard 
-                                    key={index} 
-                                    text={item.pokemon.name} 
-                                    urlToFetch={item.pokemon.url} 
-                                    contentType={contentType} 
-                                    title={title} 
-                                    color={randomColors[index]} 
-                                    onPress={navigateToCharacter} />)
+                            (<Card 
+                                key={index}
+                                url={item.pokemon.url}
+                                text={item.pokemon.name}
+                                image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${item.pokemon.url.match(/\/([^\/]+)\/?$/)[1]}.png`} 
+                                onPress={navigateToCharacter}
+                            />)
                             )
-                            : false
+                            : false                    
                     }
 
                     {
                         arrayToDisplay.length > 0 && title == "Move"?
                         arrayToDisplay.map((item, index)=>
-                            (<MultiuseCard 
+                            (<Card 
                                 key={index} 
                                 text={item.name} 
-                                urlToFetch={item.url} 
-                                contentType={contentType} 
-                                title={title} 
-                                color={randomColors[index]} 
-                                onPress={navigateToCharacter} />)
-                        )
-                
+                                url={item.url} 
+                                image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${item.url.match(/\/([^\/]+)\/?$/)[1]}.png`} 
+                                onPress={navigateToCharacter} 
+                                />)
+                            )
                         : false
                     }      
 
@@ -145,7 +142,7 @@ const styles = StyleSheet.create({
     },
     itemsContainer: { 
         flexDirection: "row",  
-        justifyContent: "flex-start", 
+        justifyContent: "center", 
         flexWrap: "wrap", 
         width: "90%"
     },

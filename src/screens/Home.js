@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  Text
+  Text,
+  Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import axios from 'axios';
@@ -27,9 +28,10 @@ export default props => {
 
   const [randomColors, setRandomColors] = useState([]);
   const [randomNumbers, setRandomNumbers] = useState();
+  const [arrayMyCharacters, setArrayMyCharacters] = useState([]);
   const isCancelled = useRef(false);
  
-  const { updateMyCharacters } = useContext(MyCharacterContext);
+  const { updateMyCharacters, data } = useContext(MyCharacterContext);
 
   useEffect(()=>{
     isCancelled.current = true
@@ -44,10 +46,10 @@ export default props => {
 
     if (isCancelled) {
       getRandomNumbers(5);
+      updateMyCharacters();
       getAbilities();
       getMoves();
       getTypes();
-      updateMyCharacters();
       getHeldItems();
     }
 
@@ -55,6 +57,12 @@ export default props => {
       setSuggestionCharacters([]);
     }
   }, []);
+
+  useEffect(()=>{
+    if (data) {
+      setArrayMyCharacters(Object.entries(data).sort(() => 0.5 - Math.random()).slice(0,5));
+    }
+  },[data]);
 
   useEffect( ()=>{
     getSuggestionCharacters();
@@ -118,6 +126,10 @@ export default props => {
     props.navigation.push("Pokemon", {data});
   };
 
+  const navigateToCharacterWithUrl = (url) => {
+    props.navigation.push("Pokemon", url);
+  };
+
   const navigateToDetail = (data) => { 
     props.navigation.push("Detail", {data});
   };
@@ -134,6 +146,10 @@ export default props => {
     props.navigation.push("ShowAll", data);
   };
 
+  const navigateToMyCharacters = () => {
+    props.navigation.push("MyCharacters");
+  };
+
   return (
   
     <ScrollView  contentContainerStyle={styles.container}>
@@ -144,7 +160,7 @@ export default props => {
         </TouchableOpacity>
       </View>
 
-      { suggestionCharacters.length > 0 &&  (<><DefaultTitle title="Suggenstions" />
+      { suggestionCharacters.length > 0 &&  (<><DefaultTitle title="Suggestions" />
         <FlatList
           data={suggestionCharacters.length > 0 ? suggestionCharacters : []}
           renderItem={({item}) => (<Card text={item.name} image={item.sprites.other["official-artwork"].front_default} 
@@ -153,6 +169,7 @@ export default props => {
           keyExtractor={item => Math.random()}
           horizontal
         />
+
         <View style={styles.showMoreButtonContainer}>
           <TouchableOpacity 
             style={styles.showMoreButton} 
@@ -160,6 +177,30 @@ export default props => {
               url: "https://pokeapi.co/api/v2/pokemon/", 
               title: "All Pokemons", 
               type: "Pokemon"})}}>
+            <Text style={styles.showMoreButtonText}>Show All</Text>
+          </TouchableOpacity>
+        </View>
+        </>)
+      }
+
+      { arrayMyCharacters.length > 0 &&  (<>
+        <View style={{ flexDirection: "row", alignItems: "center" }} >
+          <DefaultTitle title="My Saved Pokemons" />
+          <Image source={require(`../assets/characterNotSaved.png`)} style={styles.iconImage}  />
+        </View>
+        <FlatList
+          data={arrayMyCharacters}
+          renderItem={({item}) => (<Card text={item[1].name} image={item[1].image} 
+          content={item[1]} 
+          url={item[1].url} 
+          onPress={navigateToCharacterWithUrl}   />)}
+          keyExtractor={item => Math.random()}
+          horizontal
+        />
+        <View style={styles.showMoreButtonContainer}>
+          <TouchableOpacity 
+            style={styles.showMoreButton} 
+            onPress={navigateToMyCharacters}>
             <Text style={styles.showMoreButtonText}>Show All</Text>
           </TouchableOpacity>
         </View>
@@ -308,4 +349,10 @@ const styles = StyleSheet.create({
   showMoreButtonText: {
 
   },
+  iconImage: {
+    width: 28,
+    height: 28,
+    resizeMode: "contain",
+    marginTop: 10,
+}
 });

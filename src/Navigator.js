@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
+
 import Home from './screens/Home';
 import Character from './screens/Character';
 import CategoryDetail from './screens/CategoryDetail';
@@ -11,6 +13,7 @@ import CustomHeader from './components/CustomHeader';
 import MyCharacters from './screens/MyCharacters';
 import ShowAllAttributes from './screens/ShowAllAttributes';
 import { MyCharacterProvider } from './context/MyCharactersContext';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -44,6 +47,7 @@ function App() {
             component={ShowAllAttributes} 
             options={{header: (props) => <CustomHeader back  {...props} text="Show All" /> }} />
         </Stack.Navigator>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>
     </MyCharacterProvider>
   );
