@@ -44,7 +44,7 @@ export default props => {
                     <View style={styles.rightIconsContainer}>
                         {props.myPokemon && 
                             (<TouchableOpacity style={styles.icon} onPress={goToMyCharacters}>
-                                <Image source={require(`../../assets/characterNotSaved.png`)} style={styles.iconImage}  />
+                                <Image source={require(`../assets/characterNotSaved.png`)} style={styles.iconImage}  />
                             </TouchableOpacity>)
                             }
                     </View>

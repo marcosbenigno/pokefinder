@@ -13,7 +13,7 @@ export default props => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const items = ["Pokemon", "Type", "Move", "Ability"];
+    const items = ["Pokemon", "Type", "Move", "Ability", "Held Items"];
     const [arrayOfContent, setArrayOfContent] = useState([]);
 
     const selectTab = (item) => {
@@ -22,18 +22,13 @@ export default props => {
 
     useEffect(() =>{
         if (searchString.length != 0) {
+            let resource = items[selectedTab] == "Held Items" ? "item" :  items[selectedTab];
             setError('');
             setIsLoading(true);
-            console.log(`https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`)
-            axios.get(`https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`)
+            axios.get(`https://pokeapi.co/api/v2/${resource.toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`)
                 .then((res) => {
-                    if (items[selectedTab] == "Pokemon") {
-                            setArrayOfContent({...res.data, urlToFetch: `https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`});
-                           
-                     
-                    } else if (items[selectedTab] == "Type" || items[selectedTab] == "Move" || items[selectedTab] == "Ability") {
-                        setArrayOfContent({...res.data, urlToFetch: `https://pokeapi.co/api/v2/${items[selectedTab].toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`});
-                    }
+                    setArrayOfContent({...res.data, urlToFetch: `https://pokeapi.co/api/v2/${resource.toLowerCase()}/${searchString.toLowerCase().replace(/ /g, "-")}`});
+                    
 
                     setIsLoading(false);
                 })
@@ -80,8 +75,7 @@ export default props => {
             {  arrayOfContent.name && (items[selectedTab] == "Pokemon") ?
                 
                 (<MultiuseCard text={arrayOfContent.name} urlToFetch={arrayOfContent.urlToFetch} color={getRandomColor()} onPress={navigateToCharacter} />)
-                
-                
+
                 : false
             }
 
@@ -90,8 +84,7 @@ export default props => {
             {   arrayOfContent.name && (items[selectedTab] == "Type") ?
                 
                 (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Type" color={getRandomColor()}/>)
-                
-                
+
                 : false
             }
 
@@ -99,16 +92,19 @@ export default props => {
 {           arrayOfContent.name && (items[selectedTab] == "Move") ?
                 
                 (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Move" color={getRandomColor()}/>)
-                
-                
+
                 : false
             }
 
 {           arrayOfContent.name && (items[selectedTab] == "Ability") ?
                 
                 (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Ability" color={getRandomColor()}/>)
+                : false
+            }
+
+{           arrayOfContent.name && (items[selectedTab] == "Held Items") ?
                 
-                
+                (<MultiuseCard text={arrayOfContent.name} contentType={items[selectedTab]} onPress={navigateToDetail} urlToFetch={arrayOfContent.urlToFetch} data={arrayOfContent} title="Held Items" color={getRandomColor()}/>)
                 : false
             }
 

@@ -12,6 +12,8 @@ export default props => {
             content: props.data,
             url: props.urlToFetch
         })
+
+        console.log({url: props.urlToFetch})
        
     }
 

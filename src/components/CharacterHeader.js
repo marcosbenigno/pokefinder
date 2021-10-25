@@ -24,9 +24,9 @@ export default props => {
                     <CharacterName name={props.name && props.name.replace(/-/g, " ")} />
                     <TouchableOpacity styles={styles.saveCharacterButton} onPress={toggleIsCharacterSaved}>
                     {props.isSavedState ? 
-                        ( <Image source={require(`../../assets/characterSaved.png`)} style={styles.icon}  />)
+                        ( <Image source={require(`../assets/characterSaved.png`)} style={styles.icon}  />)
                         :
-                        ( <Image source={require(`../../assets/characterNotSaved.png`)} style={styles.icon}  />)
+                        ( <Image source={require(`../assets/characterNotSaved.png`)} style={styles.icon}  />)
                     }   
                     </TouchableOpacity>
                 </View>

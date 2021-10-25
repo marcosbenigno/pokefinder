@@ -38,7 +38,7 @@ export default props => {
 
 const styles = StyleSheet.create({
     container: {
-        width: "75%",
+        width: "85%",
         height: 50,
         borderWidth: 2,
         borderColor: "#cdd0d4",
@@ -53,5 +53,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flex: 1
+    },
+    tabText: {
+        textAlign: "center"
     }
 });

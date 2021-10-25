@@ -18,7 +18,6 @@ import MultiuseCard from '../components/MultiuseCard';
 import VerticalIndicator from '../components/VerticalIndicator';
 import PaginationManager from '../components/PaginationManager';
 import CharacterHeader from '../components/CharacterHeader';
-import { Storage } from 'expo-storage';
 import CustomHeader from '../components/CustomHeader';
 import MyCharacterContext from '../context/MyCharactersContext';
 
@@ -36,7 +35,6 @@ export default (props) => {
     const { height } = useWindowDimensions();
 
     useEffect(()=>{
-
         if (props.route.params.url) {
             setDataFromUrl();
         } else if (props.route.params.data) {
@@ -189,9 +187,10 @@ export default (props) => {
                 <View style={{flexGrow: 1, }} key="3">
                     <Text style={styles.sectionTitle}>Held Items</Text>
                     <ScrollView nestedScrollEnabled={true} >
+
                         
                         <View style={{flexDirection: "row",  justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap"}}>
-                            {data && data.held_items.map((item, index) => (<MultiuseCard key={`${Math.random()}`} color={mainColor} text={item.item.name} />))}       
+                            {data && data.held_items.map((item, index) => (<MultiuseCard key={`${Math.random()}`} color={mainColor} urlToFetch={item.item.url} data={item} text={item.item.name} title={"Held Items"} onPress={navigateToDetail} />))}       
                             {data && data.held_items.length === 0 ? (<Text>No items to show.</Text>) : false}
                         </View>
                     </ScrollView>

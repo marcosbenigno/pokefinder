@@ -8,7 +8,7 @@ export default props => {
         <View style={styles.container}>
             {
                 Array(props.number).fill(0).map((item, index) => 
-                    (<View key={index} style={[styles.circle, index === props.selectedPage ? {backgroundColor: props.color} :  { borderWidth: 2, borderColor: props.color, backgroundColor: "#fff" }]} />)
+                    (<View key={index} style={[styles.circle, index === props.selectedPage ? {backgroundColor: props.color || "#000"} :  { borderWidth: 2, borderColor: props.color, backgroundColor: "#fff" }]} />)
                 )
             }
         </View>

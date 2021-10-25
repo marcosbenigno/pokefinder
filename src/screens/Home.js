@@ -27,6 +27,7 @@ export default props => {
   const [randomColors, setRandomColors] = useState([]);
   const isCancelled = useRef(false);
   const [randomNumbers ,setRandomNumbers] = useState();
+  const [heldItems, setHeldItems] = useState([]);
   const { updateMyCharacters } = useContext(MyCharacterContext);
 
   useEffect(()=>{
@@ -44,7 +45,7 @@ export default props => {
       getMoves();
       getTypes();
       updateMyCharacters();
-      
+      getHeldItems();
     }
 
     return () => {
@@ -105,6 +106,13 @@ export default props => {
       .then((res) => {setTypes(res.data.results);});
   }
 
+  const getHeldItems = () => {
+    let randomNumber = parseInt(Math.random() * (996));
+    axios(`https://pokeapi.co/api/v2/item/?offset=${randomNumber}&limit=8`)
+      .catch(err => console.log(err))
+      .then((res) => {setHeldItems(res.data.results);});
+  }
+
 
   const navigateToCharacter = (data) => { 
     props.navigation.push("Pokemon", {data});
@@ -121,7 +129,9 @@ export default props => {
   const navigateToSearch = () => {
     props.navigation.push("Search");
   }
-
+  const navigateToShowAll = (data) => {
+    props.navigation.push("ShowAll", data);
+  }
   return (
   
     <ScrollView  contentContainerStyle={styles.container}>
@@ -139,7 +149,13 @@ export default props => {
         renderItem={({item}) => <Card text={item.name} image={item.sprites.other["official-artwork"].front_default} content={item} onPress={navigateToCharacter}   />}
         keyExtractor={item => Math.random()}
         horizontal
-      /></>)
+      />
+    <View style={{alignItems: "center", justifyContent: "center", marginVertical: 5}}>
+    <TouchableOpacity style={styles.showMoreButton} onPress={() => {navigateToShowAll({url: "https://pokeapi.co/api/v2/pokemon/", title: "All Pokemons", type: "Pokemon"})}}>
+      <Text style={styles.showMoreButtonText}>Show All</Text>
+    </TouchableOpacity>
+    </View>
+      </>)
   }
       
       <DefaultTitle title="Explore attributes" />
@@ -148,7 +164,13 @@ export default props => {
       <View style={{flexDirection: "row", flexWrap: "wrap"}}>
       {abillities.map((item, index) => (<Chip key={index} color={randomColors[index]} text={item.name} data={item} onPress={navigateToDetail} title={"Ability"} />)) 
       }
-      </View></>)
+      </View>
+      <View style={{alignItems: "center", justifyContent: "center", marginVertical: 5}}>
+    <TouchableOpacity style={styles.showMoreButton} onPress={() => {navigateToShowAll({url: "https://pokeapi.co/api/v2/ability/", title: "All abilities", type: "Ability"})}}>
+      <Text style={styles.showMoreButtonText}>Show All</Text>
+    </TouchableOpacity>
+    </View>
+      </>)
       }
 
       { moves.length > 6 && (<>
@@ -156,7 +178,13 @@ export default props => {
       <View style={{flexDirection: "row", flexWrap: "wrap"}}>
       {moves.map((item, index) => (<Chip key={index} color={randomColors[index+1]} text={item.name} data={item} onPress={navigateToDetail} title={"Move"} />))
         }
-    </View></>)
+    </View>
+    <View style={{alignItems: "center", justifyContent: "center", marginVertical: 5}}>
+    <TouchableOpacity style={styles.showMoreButton} onPress={() => {navigateToShowAll({url: "https://pokeapi.co/api/v2/move/", title: "All moves", type: "Move"})}}>
+      <Text style={styles.showMoreButtonText}>Show All</Text>
+    </TouchableOpacity>
+    </View>
+    </>)
     }
 
     { types.length > 6 && (<>
@@ -164,7 +192,28 @@ export default props => {
       <View style={{flexDirection: "row", flexWrap: "wrap"}}>
       {types.map((item, index) => (<Chip key={index} color={randomColors[index+2]} text={item.name} data={item} onPress={navigateToDetail} title={"Type"} />))
         }
-    </View></>)
+    </View>
+    <View style={{alignItems: "center", justifyContent: "center", marginVertical: 5}}>
+    <TouchableOpacity style={styles.showMoreButton} onPress={() => {navigateToShowAll({url: "https://pokeapi.co/api/v2/type/", title: "All types", type: "Type"})}}>
+      <Text style={styles.showMoreButtonText}>Show All</Text>
+    </TouchableOpacity>
+    </View>
+    </>)
+    }
+
+  { heldItems.length > 6 && (<>
+      <SubtitleDefault subtitle="Held Items" />
+      <View style={{flexDirection: "row", flexWrap: "wrap"}}>
+      {heldItems.map((item, index) => (<Chip key={index} color={randomColors[index+1]} text={item.name} data={item} onPress={navigateToDetail} title={"Held Items"} />))
+        }
+
+    </View>
+    <View style={{alignItems: "center", justifyContent: "center", marginVertical: 5}}>
+    <TouchableOpacity style={styles.showMoreButton} onPress={() => {navigateToShowAll({url: "https://pokeapi.co/api/v2/item/", title: "All items", type: "Held Items"})}}>
+      <Text style={styles.showMoreButtonText}>Show All</Text>
+    </TouchableOpacity>
+    </View>
+    </>)
     }
     </ScrollView>
  
@@ -193,5 +242,11 @@ const styles = StyleSheet.create({
   searchButtonText: {
     fontSize: 16,
     marginHorizontal: 5
+  },
+  showMoreButton: {
+
+  },
+  showMoreButtonText: {
+
   }
 });
