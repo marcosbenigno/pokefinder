@@ -93,6 +93,7 @@ export default (props) => {
                                 text={item.pokemon.name}
                                 image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${item.pokemon.url.match(/\/([^\/]+)\/?$/)[1]}.png`} 
                                 onPress={navigateToCharacter}
+                                color={randomColors[index]}
                             />)
                             )
                             : false                    
@@ -107,6 +108,7 @@ export default (props) => {
                                 url={item.url} 
                                 image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${item.url.match(/\/([^\/]+)\/?$/)[1]}.png`} 
                                 onPress={navigateToCharacter} 
+                                color={randomColors[index]}
                                 />)
                             )
                         : false

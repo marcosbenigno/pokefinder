@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import CharacterName from './CharacterName';
 import RoundSvg from './RoundSvg';
@@ -29,7 +30,7 @@ export default props => {
                     }   
                     </TouchableOpacity>
                 </View>
-                <Image source={{uri: props.image }} style={styles.artwork} />
+                <FastImage source={{uri: props.image }} style={styles.artwork} />
             </View>
             <View style={{position: "relative", marginTop: -0.5, width: "100%", height: 49 }}>
                 <RoundSvg color={props.color || "#F15D53"} />
@@ -67,8 +68,8 @@ const styles = StyleSheet.create({
     },
     artwork: {
         width: "100%",
-        height: "80%",
-        resizeMode: "contain"
+        height: "70%",
+        aspectRatio: 1/1 
     },
 
 });

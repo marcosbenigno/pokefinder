@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, Image, Text, StyleSheet, Dimensions } from "react-native";
+import FastImage from 'react-native-fast-image';
 
 import { getColorFromURL } from 'rn-dominant-color';
 
@@ -8,7 +9,7 @@ export default props => {
     const [backgroundColor, setBackgroundColor] = useState('#F15D53');
     
     useEffect(() => {
-        if (props.image) {
+        if (props.image && !props.color) {
             getColorFromURL(props.image).then(colors => {
                 setBackgroundColor(colors.background);
             })
@@ -25,8 +26,8 @@ export default props => {
     }
     
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor }]} onPress={onPressFunction}>
-            <Image source={{uri: props.image}} style={styles.image} />
+        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || backgroundColor }]} onPress={onPressFunction}>
+            <FastImage source={{uri: props.image}} style={styles.image} />
             <Text style={styles.text}>{props.text.replace(/-/g, " ")}</Text>
         </TouchableOpacity>
     );
@@ -46,7 +47,8 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         height: "70%",
-        resizeMode: "contain"
+        resizeMode: "contain",
+        aspectRatio: 1/1 
     },
     text: {
         color: "#000",
