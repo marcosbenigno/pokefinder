@@ -47,7 +47,7 @@ export default (props) => {
 
     useEffect(()=>{
         if (arrayOfContent.length > 0) {
-            repopulateDisplayArray(10);
+            repopulateDisplayArray(5);
             getArrayOfColors(arrayOfContent && arrayOfContent.length);
         }
     }, [arrayOfContent]);
@@ -62,8 +62,9 @@ export default (props) => {
             let selectLastElement = 
                 offset + numberOfElements > arrayOfContent.length ? 
                     arrayOfContent.length : offset + numberOfElements;
+                    
             setArrayToDisplay([...arrayToDisplay, ...arrayOfContent.slice(offset, selectLastElement)]);
-            setOffset(selectLastElement + 1);
+            setOffset(selectLastElement);
         }
     };
 
@@ -123,7 +124,7 @@ export default (props) => {
                         arrayOfContent && offset < arrayOfContent.length && !isLoading ?
                             (<View style={styles.buttonContainer}>
                                 <TouchableOpacity style={styles.button}
-                                    onPress={()=>{repopulateDisplayArray(10)}}>
+                                    onPress={()=>{repopulateDisplayArray(5)}}>
                                     <Text style={styles.textButton}>Show more</Text>
                                 </TouchableOpacity>
                             </View>)

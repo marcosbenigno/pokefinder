@@ -7,20 +7,20 @@ export default props => {
     return (
         <View style={styles.container}>
             <View style={styles.itemsContainer}>
-                {props.selectedPage != 0 && <Icon name="chevron-left" color={props.color} size={24} />}
+                {props.selectedPage != 0 && <Icon name="chevron-left" color={props.color || "#F15D53"} size={24} />}
                 {
                     Array(props.number).fill(0).map((item, index) => 
                         (
                             <View key={index} 
                                 style={[styles.circle, 
                                         index === props.selectedPage ? 
-                                        {backgroundColor: props.color || "#000"} 
+                                        {backgroundColor: props.color || "#F15D53"} 
                                         :  
-                                        { borderWidth: 2, borderColor: props.color, backgroundColor: "#fff" }]} />
+                                        { borderWidth: 2, borderColor: props.color || "#F15D53", backgroundColor: "#fff" }]} />
                         )
                     )
                 }
-                {props.selectedPage != props.number - 1 && <Icon name="chevron-right" color={props.color} size={24} />}
+                {props.selectedPage != props.number - 1 && <Icon name="chevron-right" color={props.color || "#F15D53"} size={24} />}
             </View>
         </View>
     );

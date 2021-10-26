@@ -5,7 +5,7 @@ import { getColorFromURL } from 'rn-dominant-color';
 
 export default props => {
 
-    const [backgroundColor, setBackgroundColor] = useState('#DE4141');
+    const [backgroundColor, setBackgroundColor] = useState('#F15D53');
     
     useEffect(() => {
         if (props.image) {

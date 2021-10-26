@@ -71,7 +71,7 @@ export default (props) => {
                     .then(colors => {
                         setMainColor(colors.background);
                     })
-                    .catch((err) => setMainColor("#7FADD1"));
+                    .catch((err) => setMainColor("#F15D53"));
             
                 })
                 .catch((err) => {console.log(err);});
@@ -121,7 +121,7 @@ export default (props) => {
                 offset + numberOfElements > movesArray.length ? 
                     movesArray.length : offset + numberOfElements;
             setMovesDisplayArray([...movesDisplayArray, ...movesArray.slice(offset, selectLastElement)]);
-            setOffset(selectLastElement + 1);
+            setOffset(selectLastElement);
         }
     };
 
@@ -246,7 +246,7 @@ export default (props) => {
                                         size={50}
                                         width={8}
                                         fill={item.base_stat}
-                                        tintColor={mainColor}
+                                        tintColor={mainColor || "#F15D53"}
                                         backgroundColor="#000">
                                                 {(fill) => (<Text>{ fill }</Text>)}
                                         </AnimatedCircularProgress>

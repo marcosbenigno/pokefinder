@@ -15,7 +15,7 @@ export default props => {
     };
     
     return (
-        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#DE4141", }]} onPress={onPressFunction}>
+        <TouchableOpacity style={[styles.container, { backgroundColor: props.color || "#F15D53", }]} onPress={onPressFunction}>
             <Text style={styles.text}>{props.text.replace(/-/g, " ")}</Text>
             <Icon name="chevron-right" style={styles.icon} size={20} color="#000" />
         </TouchableOpacity>

@@ -17,7 +17,7 @@ export default props => {
 
     return (
         <View style={styles.container}>
-            <View style={[styles.characterHeader, { backgroundColor: props.color || "#DE4141" }]}>
+            <View style={[styles.characterHeader, { backgroundColor: props.color || "#F15D53" }]}>
                 <View style={styles.header}>
                     <CharacterName name={props.name && props.name.replace(/-/g, " ")} />
                     <TouchableOpacity styles={styles.saveCharacterButton} onPress={toggleIsCharacterSaved}>
@@ -32,7 +32,7 @@ export default props => {
                 <Image source={{uri: props.image }} style={styles.artwork} />
             </View>
             <View style={{position: "relative", marginTop: -0.5, width: "100%", height: 49 }}>
-                <RoundSvg color={props.color || "#DE4141"} />
+                <RoundSvg color={props.color || "#F15D53"} />
             </View>
         </View>
 
