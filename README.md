@@ -4,6 +4,7 @@ Pokefinder is a mobile app to find informations about Pokemons, using informatio
 
 ## Instalation
 After cloning the repository, you need to install the dependencies with:
+
 ```sh
 yarn install
 ```
